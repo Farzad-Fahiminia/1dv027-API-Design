@@ -8,12 +8,12 @@
 // import createError from 'http-errors'
 import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
-import { User } from '../../models/api.js'
+import { User } from '../../models/user.js'
 
 /**
  * Encapsulates a controller.
  */
-export class ApiController {
+export class UserController {
   /**
    * Authenticates a user.
    *

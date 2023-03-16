@@ -6,11 +6,11 @@
  */
 
 import express from 'express'
-import { ApiController } from '../../../controllers/api/ApiController.js'
+import { UserController } from '../../../controllers/api/UserController.js'
 
 export const router = express.Router()
 
-const controller = new ApiController()
+const controller = new UserController()
 
 // Map HTTP verbs and route paths to controller actions.
 

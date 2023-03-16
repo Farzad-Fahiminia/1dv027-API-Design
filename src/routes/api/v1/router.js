@@ -6,7 +6,7 @@
  */
 
 import express from 'express'
-import { router as accountRouter } from './account-router.js'
+import { router as accountRouter } from './userRouter.js'
 
 export const router = express.Router()
 
