@@ -7,9 +7,6 @@
 
 import bcrypt from 'bcrypt'
 import mongoose from 'mongoose'
-import validator from 'validator'
-
-const { isEmail } = validator
 
 // Create a schema.
 const schema = new mongoose.Schema({
