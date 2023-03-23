@@ -8,7 +8,7 @@
 // import createError from 'http-errors'
 import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
-import { User } from '../../models/user.js'
+import { UserModel } from '../../models/user.js'
 
 /**
  * Encapsulates a controller.
@@ -23,7 +23,7 @@ export class UserController {
    */
   async login (req, res, next) {
     try {
-      const user = await User.authenticate(req.body.username, req.body.password)
+      const user = await UserModel.authenticate(req.body.username, req.body.password)
 
       const token = Buffer.from(process.env.ACCESS_TOKEN_SECRET, 'base64')
 
@@ -65,7 +65,7 @@ export class UserController {
    */
   async register (req, res, next) {
     try {
-      const user = new User({
+      const user = new UserModel({
         username: req.body.username,
         password: req.body.password,
         firstName: req.body.firstName,
