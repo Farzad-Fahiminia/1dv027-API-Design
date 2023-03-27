@@ -9,25 +9,29 @@ import mongoose from 'mongoose'
 
 // Create a schema.
 const schema = new mongoose.Schema({
-  title: {
+  artist: {
     type: String,
     required: [true, 'Title is required.'],
     trim: true
+  },
+  recordTitle: {
+    type: String,
+    required: true
   },
   releaseYear: {
     type: Number,
     required: [true, 'Release year is required.'],
     trim: true
   },
-  genre: {
-    type: String,
-    required: [true, 'Genre is required.']
-  },
   uri: {
     type: String,
     required: true,
     trim: true,
     minlength: 1
+  },
+  userId: {
+    type: String,
+    immutable: true
   },
   comments: {
     type: [{ body: String, date: Date }]
@@ -54,4 +58,4 @@ schema.virtual('id').get(function () {
 })
 
 // Create a model using the schema.
-export const Movie = mongoose.model('Movie', schema)
+export const RecordModel = mongoose.model('Record', schema)
