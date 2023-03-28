@@ -170,7 +170,7 @@ export class RecordController {
   }
 
   /**
-   * Patch specific record.
+   * Patch a specific record.
    *
    * @param {object} req - Express request object.
    * @param {object} res - Express response object.
@@ -214,12 +214,10 @@ export class RecordController {
    */
   async deleteRecord (req, res, next) {
     try {
-      console.log('DELETE user ', req.user)
-      console.log('DELETE params ', req.params.id)
       const record = await RecordModel.findById(req.params.id)
-      if (req.user.id === record[0].userId) {
+      if (req.user.id === record.userId) {
         if (record !== null) {
-          await RecordModel.findByIdAndDelete(record[0])
+          await RecordModel.findByIdAndDelete(record)
           res.status(204).send('Record has been deleted!')
         } else {
           next(createError(404, 'The requested resource was not found.'))
