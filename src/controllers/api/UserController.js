@@ -9,6 +9,7 @@
 import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
 import { UserModel } from '../../models/user.js'
+// import verifyJwt from '../../middleware/Authentication.js'
 
 /**
  * Encapsulates a controller.
@@ -29,11 +30,13 @@ export class UserController {
 
       const payload = {
         sub: user.username,
+        password: user.password,
         given_name: user.firstName,
         family_name: user.lastName,
-        email: user.email,
         id: user._id
       }
+
+      console.log('PAY', payload)
 
       // Create the access token with the shorter lifespan.
       const accessToken = jwt.sign(payload, token, {

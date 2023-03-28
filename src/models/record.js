@@ -9,14 +9,20 @@ import mongoose from 'mongoose'
 
 // Create a schema.
 const schema = new mongoose.Schema({
+  recordId: {
+    type: String,
+    // required: true,
+    trim: true,
+    immutable: true
+  },
   artist: {
     type: String,
-    required: [true, 'Title is required.'],
+    required: [true, 'Artist is required.'],
     trim: true
   },
   recordTitle: {
     type: String,
-    required: true
+    required: [true, 'Title is required.']
   },
   releaseYear: {
     type: Number,

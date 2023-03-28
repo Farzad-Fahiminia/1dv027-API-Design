@@ -20,13 +20,17 @@ router.get('/:id',
   (req, res, next) => controller.getRecord(req, res, next))
 
 router.post('/',
-  // (req, res, next) => controller.authenticate(req, res, next),
+  (req, res, next) => controller.authenticateJWT(req, res, next),
   (req, res, next) => controller.addRecord(req, res, next))
 
+router.put('/:id',
+  (req, res, next) => controller.authenticateJWT(req, res, next),
+  (req, res, next) => controller.putRecord(req, res, next))
+
 router.patch('/:id',
-  (req, res, next) => controller.authenticate(req, res, next),
+  (req, res, next) => controller.authenticateJWT(req, res, next),
   (req, res, next) => controller.patchRecord(req, res, next))
 
 router.delete('/:id',
-  (req, res, next) => controller.authenticate(req, res, next),
+  (req, res, next) => controller.authenticateJWT(req, res, next),
   (req, res, next) => controller.deleteRecord(req, res, next))

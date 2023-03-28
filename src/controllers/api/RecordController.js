@@ -8,55 +8,13 @@
 // import createError from 'http-errors'
 import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
-import { UserModel } from '../../models/user.js'
+// import { UserModel } from '../../models/user.js'
 import { RecordModel } from '../../models/record.js'
 
 /**
  * Encapsulates a controller.
  */
 export class RecordController {
-  /**
-   * Authenticates a user.
-   *
-   * @param {object} req - Express request object.
-   * @param {object} res - Express response object.
-   * @param {Function} next - Express next middleware function.
-   */
-  async login (req, res, next) {
-    try {
-      const user = await UserModel.authenticate(req.body.username, req.body.password)
-
-      const token = Buffer.from(process.env.ACCESS_TOKEN_SECRET, 'base64')
-
-      const payload = {
-        sub: user.username,
-        given_name: user.firstName,
-        family_name: user.lastName,
-        email: user.email,
-        id: user._id
-      }
-
-      // Create the access token with the shorter lifespan.
-      const accessToken = jwt.sign(payload, token, {
-        algorithm: 'RS256',
-        expiresIn: process.env.ACCESS_TOKEN_LIFE
-      })
-
-      res
-        .status(200)
-        .json({
-          access_token: accessToken
-          // refresh_token: refreshToken
-        })
-    } catch (error) {
-      // Authentication failed.
-      const err = createError(401)
-      err.cause = error
-
-      next(err)
-    }
-  }
-
   /**
    * Authenticates requests.
    *
@@ -68,30 +26,28 @@ export class RecordController {
    * @param {object} res - Express response object.
    * @param {Function} next - Express next middleware function.
    */
-  async authenticate (req, res, next) {
+  authenticateJWT = (req, res, next) => {
     try {
-      // if (firebase.apps.length === 0) {
-      //   initializeApp({
-      //     credential: firebase.credential.cert(firebaseConfig)
-      //   })
-      // }
+      const publicKey = Buffer.from(process.env.ACCESS_TOKEN_SECRET, 'base64')
+      const [authenticationScheme, token] = req.headers.authorization?.split(' ')
 
-      // const header = req.headers?.authorization
+      if (authenticationScheme !== 'Bearer') {
+        next(createError(400, 'The request cannot or will not be processed due to something that is perceived to be a client error (for example, validation error).'))
+      }
 
-      // if (header !== 'Bearer null' && req.headers?.authorization?.startsWith('Bearer ')) {
-      //   const idToken = req.headers.authorization.split('Bearer ')[1]
-      //   await getAuth().verifyIdToken(idToken)
-      //   next()
-      // } else {
-      //   const error = createError(401)
-      //   next(error)
-      // }
+      const payload = jwt.verify(token, publicKey)
+      req.user = {
+        username: payload.sub,
+        password: payload.password,
+        firstName: payload.given_name,
+        lastName: payload.family_name,
+        id: payload.id
+      }
+
       next()
     } catch (err) {
-      let error = err
-      if (err.code === 'auth/argument-error' || err.code === 'auth/id-token-expired') {
-        error = createError(401)
-      }
+      const error = createError(401)
+      error.cause = err
       next(error)
     }
   }
@@ -154,17 +110,110 @@ export class RecordController {
    */
   async addRecord (req, res, next) {
     try {
+      console.log('REQUEST ', req.user)
       const record = new RecordModel({
+        // recordId: req
         artist: req.body.artist,
         recordTitle: req.body.recordTitle,
         releaseYear: req.body.releaseYear,
-        uri: req.body.uri
+        uri: req.body.uri,
+        userId: req.user.id
       })
 
       await record.save()
       res.sendStatus(201)
     } catch (error) {
       console.log(error)
+    }
+  }
+
+  /**
+   * Put record.
+   *
+   * @param {object} req - Express request object.
+   * @param {object} res - Express response object.
+   * @param {Function} next - Express next middleware function.
+   */
+  async putRecord (req, res, next) {
+    console.log(req.body)
+    try {
+      // if (req.body.data === undefined || req.body.contentType === undefined) {
+      //   next(createError(400, 'The request cannot or will not be processed due to something that is perceived to be a client error (for example validation error).'))
+      // } else {
+      const record = await RecordModel.findById({ recordId: req.params.id })
+      console.log('RECORD ', record)
+
+      // if (req.user.id === record[record.length - 1].userId) {
+        if (record !== null) {
+          // const recordObject = {
+          //   contentType: req.body.contentType,
+          //   description: req.body.description
+          // }
+
+          // await fetch(process.env.IMAGE_RESOURCE_URL + '/' + req.params.id,
+          //   {
+          //     method: 'PUT',
+          //     headers: {
+          //       'Content-Type': 'application/json',
+          //       'x-API-Private-Token': process.env.PERSONAL_ACCESS_TOKEN
+          //     },
+          //     body: JSON.stringify(recordObject)
+          //   })
+
+          await RecordModel.findOneAndReplace({ _id: req.params.id }, obj, { runValidators: true })
+
+          const newRecordData = await RecordModel.findByIdAndUpdate(record, recordObject, { runValidators: true })
+          await newRecordData.save()
+
+          res.sendStatus(204)
+        } else {
+          next(createError(404, 'The requested resource was not found.'))
+        }
+      // } else {
+      //   next(createError(403, 'The request contained valid data and was understood by the server, but the server is refusing action due to the authenticated user not having the necessary permissions for the resource.'))
+      // }
+      // }
+    } catch (error) {
+      const err = createError(500, 'An unexpected condition was encountered.')
+      err.cause = error
+
+      next(err)
+    }
+  }
+
+  /**
+   * Patch specific record.
+   *
+   * @param {object} req - Express request object.
+   * @param {object} res - Express response object.
+   * @param {Function} next - Express next middleware function.
+   */
+  async patchRecord (req, res, next) {
+    try {
+      const record = await RecordModel.findById(req.params.id)
+
+      if (record !== null) {
+        const recordObj = {
+          artist: req.body.artist,
+          recordTitle: req.body.recordTitle,
+          releaseYear: req.body.releaseYear,
+          uri: req.body.uri
+        }
+
+        const newRecordData = await RecordModel.findByIdAndUpdate(req.params.id, recordObj, { runValidators: true })
+        await newRecordData.save()
+
+        res.sendStatus(204)
+      } else {
+        next(createError(404, 'The requested resource was not found.'))
+      }
+    } catch (error) {
+      let err = error
+      if (err.name === 'ValidationError') {
+        err = createError(400)
+      }
+
+      next(err)
     }
   }
 }
