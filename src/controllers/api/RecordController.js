@@ -110,9 +110,7 @@ export class RecordController {
    */
   async addRecord (req, res, next) {
     try {
-      console.log('REQUEST ', req.user)
       const record = new RecordModel({
-        // recordId: req
         artist: req.body.artist,
         recordTitle: req.body.recordTitle,
         releaseYear: req.body.releaseYear,
@@ -135,44 +133,34 @@ export class RecordController {
    * @param {Function} next - Express next middleware function.
    */
   async putRecord (req, res, next) {
-    console.log(req.body)
     try {
-      // if (req.body.data === undefined || req.body.contentType === undefined) {
-      //   next(createError(400, 'The request cannot or will not be processed due to something that is perceived to be a client error (for example validation error).'))
-      // } else {
-      const record = await RecordModel.findById({ recordId: req.params.id })
-      console.log('RECORD ', record)
+      if (req.body === undefined) {
+        next(createError(400, 'The request cannot or will not be processed due to something that is perceived to be a client error (for example validation error).'))
+      } else {
+        const record = await RecordModel.findById(req.params.id)
 
-      // if (req.user.id === record[record.length - 1].userId) {
-        if (record !== null) {
-          // const recordObject = {
-          //   contentType: req.body.contentType,
-          //   description: req.body.description
-          // }
+        if (req.user.id === record.userId) {
+          if (record !== null) {
+            const recordObject = {
+              artist: req.body.artist,
+              recordTitle: req.body.recordTitle,
+              releaseYear: req.body.releaseYear,
+              uri: req.body.uri,
+              userId: req.user.id
+            }
 
-          // await fetch(process.env.IMAGE_RESOURCE_URL + '/' + req.params.id,
-          //   {
-          //     method: 'PUT',
-          //     headers: {
-          //       'Content-Type': 'application/json',
-          //       'x-API-Private-Token': process.env.PERSONAL_ACCESS_TOKEN
-          //     },
-          //     body: JSON.stringify(recordObject)
-          //   })
+            const newRecordData = await RecordModel.findOneAndReplace({ _id: req.params.id }, recordObject, { runValidators: true })
 
-          await RecordModel.findOneAndReplace({ _id: req.params.id }, obj, { runValidators: true })
+            await newRecordData.save()
 
-          const newRecordData = await RecordModel.findByIdAndUpdate(record, recordObject, { runValidators: true })
-          await newRecordData.save()
-
-          res.sendStatus(204)
+            res.sendStatus(204)
+          } else {
+            next(createError(404, 'The requested resource was not found.'))
+          }
         } else {
-          next(createError(404, 'The requested resource was not found.'))
+          next(createError(403, 'The request contained valid data and was understood by the server, but the server is refusing action due to the authenticated user not having the necessary permissions for the resource.'))
         }
-      // } else {
-      //   next(createError(403, 'The request contained valid data and was understood by the server, but the server is refusing action due to the authenticated user not having the necessary permissions for the resource.'))
-      // }
-      // }
+      }
     } catch (error) {
       const err = createError(500, 'An unexpected condition was encountered.')
       err.cause = error
@@ -212,6 +200,36 @@ export class RecordController {
       if (err.name === 'ValidationError') {
         err = createError(400)
       }
+
+      next(err)
+    }
+  }
+
+  /**
+   * Delete specific record.
+   *
+   * @param {object} req - Express request object.
+   * @param {object} res - Express response object.
+   * @param {Function} next - Express next middleware function.
+   */
+  async deleteRecord (req, res, next) {
+    try {
+      console.log('DELETE user ', req.user)
+      console.log('DELETE params ', req.params.id)
+      const record = await RecordModel.findById(req.params.id)
+      if (req.user.id === record[0].userId) {
+        if (record !== null) {
+          await RecordModel.findByIdAndDelete(record[0])
+          res.status(204).send('Record has been deleted!')
+        } else {
+          next(createError(404, 'The requested resource was not found.'))
+        }
+      } else {
+        next(createError(403, 'The request contained valid data and was understood by the server, but the server is refusing action due to the authenticated user not having the necessary permissions for the resource.'))
+      }
+    } catch (error) {
+      const err = createError(500, 'An unexpected condition was encountered.')
+      err.cause = error
 
       next(err)
     }

@@ -9,12 +9,6 @@ import mongoose from 'mongoose'
 
 // Create a schema.
 const schema = new mongoose.Schema({
-  recordId: {
-    type: String,
-    // required: true,
-    trim: true,
-    immutable: true
-  },
   artist: {
     type: String,
     required: [true, 'Artist is required.'],
@@ -37,6 +31,7 @@ const schema = new mongoose.Schema({
   },
   userId: {
     type: String,
+    required: true,
     immutable: true
   },
   comments: {
