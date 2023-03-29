@@ -30,19 +30,13 @@ export class RecordService {
   }
 
   /**
-   * Handles the access token.
+   * Handles the records api links.
    *
    * @param {object} records - All of the records.
    * @param {object} req - Express request object.
    * @returns {object} - Returns the response object.
    */
   async getAllRecordsApi (records, req) {
-    // const links = {
-    //   rel: 'records',
-    //   href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${_id}`,
-    //   method: 'GET'
-    // }
-
     const recordsCollection = []
 
     const baseLinks = await this.#links.getBaseLink(req)
@@ -61,7 +55,50 @@ export class RecordService {
 
     const response = {
       records: recordsCollection,
-      link: baseLinks
+      globalLinks: baseLinks
+    }
+
+    return response
+  }
+
+  /**
+   * Handles the records api links.
+   *
+   * @param {object} record - A record.
+   * @param {object} req - Express request object.
+   * @returns {object} - Returns the response object.
+   */
+  async getRecordApi (record, req) {
+    const baseLinks = await this.#links.getBaseLink(req)
+
+    const link = this.#links.getAllLinks(record, req)
+    const recordObject = {
+      artist: record.artist,
+      recordTitle: record.recordTitle,
+      releaseYear: record.releaseYear,
+      recordId: record._id,
+      links: link
+    }
+
+    const response = {
+      record: recordObject,
+      globalLinks: baseLinks
+    }
+
+    return response
+  }
+
+  /**
+   * Handles the base links.
+   *
+   * @param {object} req - Express request object.
+   * @returns {object} - Returns the response object.
+   */
+  async getBaseApi (req) {
+    const baseLinks = await this.#links.getBaseLink(req)
+
+    const response = {
+      globalLinks: baseLinks
     }
 
     return response

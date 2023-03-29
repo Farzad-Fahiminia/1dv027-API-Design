@@ -119,9 +119,13 @@ export class RecordController {
     try {
       // const record = await RecordModel.findById(req.params.id)
       const record = await this.#repository.getRecord(req)
+      const apiResponse = await this.#service.getRecordApi(record, req)
 
       if (record.id.length > 0 && record.id !== null) {
-        res.status(200).send(record)
+        res
+          .status(200)
+          .json(apiResponse)
+        // res.status(200).send(record)
       } else {
         next(createError(404, 'The requested resource was not found.'))
       }
@@ -152,9 +156,14 @@ export class RecordController {
       // })
 
       // await record.save()
-      await this.#repository.addRecord(req)
+      const record = await this.#repository.addRecord(req)
 
-      res.sendStatus(201)
+      const apiResponse = await this.#service.getRecordApi(record, req)
+
+      res
+        .status(201)
+        .json(apiResponse)
+      // res.sendStatus(201)
     } catch (error) {
       console.log(error)
     }
@@ -188,9 +197,15 @@ export class RecordController {
 
             // await newRecordData.save()
 
-            await this.#repository.putRecord(req)
+            const record = await this.#repository.putRecord(req)
 
-            res.sendStatus(204)
+            const apiResponse = await this.#service.getRecordApi(record, req)
+
+            res
+              .status(200)
+              .json(apiResponse)
+
+            // res.sendStatus(204)
           } else {
             next(createError(404, 'The requested resource was not found.'))
           }
@@ -228,9 +243,15 @@ export class RecordController {
         // const newRecordData = await RecordModel.findByIdAndUpdate(req.params.id, recordObj, { runValidators: true })
         // await newRecordData.save()
 
-        await this.#repository.patchRecord(req)
+        const record = await this.#repository.patchRecord(req)
 
-        res.sendStatus(204)
+        const apiResponse = await this.#service.getRecordApi(record, req)
+
+        res
+          .status(200)
+          .json(apiResponse)
+
+        // res.sendStatus(204)
       } else {
         next(createError(404, 'The requested resource was not found.'))
       }
@@ -259,7 +280,13 @@ export class RecordController {
           // await RecordModel.findByIdAndDelete(record)
           await this.#repository.deleteRecord(record)
 
-          res.status(204).send('Record has been deleted!')
+          const apiResponse = await this.#service.getBaseApi(req)
+
+          res
+            .status(200)
+            .json(apiResponse)
+
+          // res.status(204).send('Record has been deleted!')
         } else {
           next(createError(404, 'The requested resource was not found.'))
         }

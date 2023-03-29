@@ -87,9 +87,8 @@ export class RecordRepository {
       userId: req.user.id
     }
 
-    const newRecordData = await RecordModel.findOneAndReplace({ _id: req.params.id }, recordObject, { runValidators: true })
-
-    await newRecordData.save()
+    let newRecordData = await RecordModel.findOneAndReplace({ _id: req.params.id }, recordObject, { runValidators: true })
+    newRecordData = await RecordModel.findById(req.params.id)
 
     return newRecordData
   }
@@ -108,9 +107,8 @@ export class RecordRepository {
       uri: req.body.uri
     }
 
-    const newRecordData = await RecordModel.findByIdAndUpdate(req.params.id, recordObj, { runValidators: true })
-
-    await newRecordData.save()
+    let newRecordData = await RecordModel.findByIdAndUpdate(req.params.id, recordObj, { runValidators: true })
+    newRecordData = await RecordModel.findById(req.params.id)
 
     return newRecordData
   }

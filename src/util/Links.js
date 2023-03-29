@@ -12,15 +12,16 @@ export class Links {
   /**
    * Get all links.
    *
+   * @param {object} record - Record object.
    * @param {object} req - Express request object.
    * @returns {object} - Returns the response object.
    */
-  getAllLinks (req) {
+  getAllLinks (record, req) {
     const links = [
-      { rel: 'self', method: 'GET', href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${req._id}` },
-      { rel: 'update_parts', method: 'PATCH', href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${req._id}` },
-      { rel: 'update_all', method: 'PUT', href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${req._id}` },
-      { rel: 'delete', method: 'DELETE', href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${req._id}` }
+      { rel: 'self', method: 'GET', href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${record._id}` },
+      { rel: 'update_parts', method: 'PATCH', href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${record._id}` },
+      { rel: 'update_all', method: 'PUT', href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${record._id}` },
+      { rel: 'delete', method: 'DELETE', href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${record._id}` }
     ]
 
     return links
