@@ -17,7 +17,7 @@ import { UserRepository } from '../../repositories/UserRepository.js'
  */
 export class UsersController {
   /**
-   * The service.
+   * The repository.
    *
    * @type {UserRepository}
    */
@@ -26,7 +26,7 @@ export class UsersController {
   /**
    * Initializes a new instance.
    *
-   * @param {UserRepository} repository - A service instantiated from a class with the same capabilities as UsersService.
+   * @param {UserRepository} repository - A service instantiated from a class with the same capabilities as UserRepository.
    */
   constructor (repository = new UserRepository()) {
     this.#repository = repository
@@ -59,7 +59,7 @@ export class UsersController {
       //   expiresIn: process.env.ACCESS_TOKEN_LIFE
       // })
 
-      const accessToken = await this.repository.signToken(req)
+      const accessToken = await this.#repository.signToken(req)
 
       res
         .status(200)

@@ -10,11 +10,28 @@ import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
 // import { UserModel } from '../../models/user.js'
 import { RecordModel } from '../../models/record.js'
+import { RecordRepository } from '../../repositories/RecordRepository.js'
 
 /**
  * Encapsulates a controller.
  */
 export class RecordController {
+  /**
+   * The repository.
+   *
+   * @type {RecordRepository}
+   */
+  #repository
+
+  /**
+   * Initializes a new instance.
+   *
+   * @param {RecordRepository} repository - A service instantiated from a class with the same capabilities as RecordRepository.
+   */
+  constructor (repository = new RecordRepository()) {
+    this.#repository = repository
+  }
+
   /**
    * Authenticates requests.
    *
@@ -61,7 +78,8 @@ export class RecordController {
    */
   async getAllRecords (req, res, next) {
     try {
-      const records = await RecordModel.find()
+      // const records = await RecordModel.find()
+      const records = await this.#repository.getAllRecords()
       if (records !== null) {
         res.status(200).send(records)
       } else {
@@ -85,7 +103,8 @@ export class RecordController {
    */
   async getRecord (req, res, next) {
     try {
-      const record = await RecordModel.findById(req.params.id)
+      // const record = await RecordModel.findById(req.params.id)
+      const record = await this.#repository.getRecord(req)
 
       if (record.id.length > 0 && record.id !== null) {
         res.status(200).send(record)
@@ -110,15 +129,17 @@ export class RecordController {
    */
   async addRecord (req, res, next) {
     try {
-      const record = new RecordModel({
-        artist: req.body.artist,
-        recordTitle: req.body.recordTitle,
-        releaseYear: req.body.releaseYear,
-        uri: req.body.uri,
-        userId: req.user.id
-      })
+      // const record = new RecordModel({
+      //   artist: req.body.artist,
+      //   recordTitle: req.body.recordTitle,
+      //   releaseYear: req.body.releaseYear,
+      //   uri: req.body.uri,
+      //   userId: req.user.id
+      // })
 
-      await record.save()
+      // await record.save()
+      await this.#repository.addRecord(req)
+
       res.sendStatus(201)
     } catch (error) {
       console.log(error)
@@ -141,17 +162,19 @@ export class RecordController {
 
         if (req.user.id === record.userId) {
           if (record !== null) {
-            const recordObject = {
-              artist: req.body.artist,
-              recordTitle: req.body.recordTitle,
-              releaseYear: req.body.releaseYear,
-              uri: req.body.uri,
-              userId: req.user.id
-            }
+            // const recordObject = {
+            //   artist: req.body.artist,
+            //   recordTitle: req.body.recordTitle,
+            //   releaseYear: req.body.releaseYear,
+            //   uri: req.body.uri,
+            //   userId: req.user.id
+            // }
 
-            const newRecordData = await RecordModel.findOneAndReplace({ _id: req.params.id }, recordObject, { runValidators: true })
+            // const newRecordData = await RecordModel.findOneAndReplace({ _id: req.params.id }, recordObject, { runValidators: true })
 
-            await newRecordData.save()
+            // await newRecordData.save()
+
+            await this.#repository.putRecord(req)
 
             res.sendStatus(204)
           } else {
@@ -181,15 +204,17 @@ export class RecordController {
       const record = await RecordModel.findById(req.params.id)
 
       if (record !== null) {
-        const recordObj = {
-          artist: req.body.artist,
-          recordTitle: req.body.recordTitle,
-          releaseYear: req.body.releaseYear,
-          uri: req.body.uri
-        }
+        // const recordObj = {
+        //   artist: req.body.artist,
+        //   recordTitle: req.body.recordTitle,
+        //   releaseYear: req.body.releaseYear,
+        //   uri: req.body.uri
+        // }
 
-        const newRecordData = await RecordModel.findByIdAndUpdate(req.params.id, recordObj, { runValidators: true })
-        await newRecordData.save()
+        // const newRecordData = await RecordModel.findByIdAndUpdate(req.params.id, recordObj, { runValidators: true })
+        // await newRecordData.save()
+
+        await this.#repository.patchRecord(req)
 
         res.sendStatus(204)
       } else {
@@ -217,7 +242,9 @@ export class RecordController {
       const record = await RecordModel.findById(req.params.id)
       if (req.user.id === record.userId) {
         if (record !== null) {
-          await RecordModel.findByIdAndDelete(record)
+          // await RecordModel.findByIdAndDelete(record)
+          await this.#repository.deleteRecord(record)
+
           res.status(204).send('Record has been deleted!')
         } else {
           next(createError(404, 'The requested resource was not found.'))

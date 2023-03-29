@@ -7,10 +7,23 @@
 
 import { IoCContainer } from '../util/IoCContainer.js'
 // import { UsersService } from '../services/UsersService.js'
+import { RecordRepository } from '../repositories/RecordRepository.js'
 import { UserRepository } from '../repositories/UserRepository.js'
+import { RecordController } from '../controllers/api/RecordController.js'
 import { UsersController } from '../controllers/api/UsersController.js'
 
 const iocContainer = new IoCContainer()
+
+iocContainer.register('RecordRepository', RecordRepository, {
+  singleton: true
+})
+
+iocContainer.register('RecordController', RecordController, {
+  dependencies: [
+    'RecordRepository'
+  ],
+  singleton: true
+})
 
 iocContainer.register('UserRepository', UserRepository, {
   singleton: true
