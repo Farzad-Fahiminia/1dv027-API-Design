@@ -7,11 +7,28 @@
 
 // import jwt from 'jsonwebtoken'
 // import { RecordModel } from '../models/record.js'
+import { Links } from '../util/Links.js'
 
 /**
  * Encapsulates a service.
  */
 export class RecordService {
+  /**
+   * The links.
+   *
+   * @type {Links}
+   */
+  #links
+
+  /**
+   * Initializes a new instance.
+   *
+   * @param {Links} links - A service instantiated from a class with the same capabilities as RecordRepository.
+   */
+  constructor (links = new Links()) {
+    this.#links = links
+  }
+
   /**
    * Handles the access token.
    *
@@ -20,8 +37,6 @@ export class RecordService {
    * @returns {object} - Returns the response object.
    */
   async getAllRecordsApi (records, req) {
-    // console.log(records)
-
     // const links = {
     //   rel: 'records',
     //   href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${_id}`,
@@ -30,23 +45,23 @@ export class RecordService {
 
     const recordsCollection = []
 
+    const baseLinks = await this.#links.getBaseLink(req)
+
     records.forEach((record) => {
+      const link = this.#links.getLink(record, req)
       const recordObject = {
         artist: record.artist,
         recordTitle: record.recordTitle,
         releaseYear: record.releaseYear,
         recordId: record._id,
-        links: [{
-          rel: 'self',
-          method: 'GET',
-          href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${record._id}`
-        }]
+        links: link
       }
       recordsCollection.push(recordObject)
     })
 
     const response = {
-      records: recordsCollection
+      records: recordsCollection,
+      link: baseLinks
     }
 
     return response
