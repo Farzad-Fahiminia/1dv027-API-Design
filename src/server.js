@@ -5,7 +5,7 @@
  * @version 1.0.0
  */
 
-// import { container } from './config/bootstrap.js'
+import { container } from './config/bootstrap.js'
 import express from 'express'
 import logger from 'morgan'
 import createError from 'http-errors'
@@ -19,12 +19,10 @@ try {
   // Set up a morgan logger using the dev format for log entries.
   app.use(logger('dev'))
 
-  // app.set('container', container)
+  app.set('container', container)
 
   // Parse requests of the content type application/json.
   app.use(express.json())
-
-  // app.use(express.json({ limit: '500kb' }))
 
   // Register routes.
   app.use('/', router)

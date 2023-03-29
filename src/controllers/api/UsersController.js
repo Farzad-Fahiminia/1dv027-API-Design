@@ -6,15 +6,31 @@
  */
 
 // import createError from 'http-errors'
-import jwt from 'jsonwebtoken'
+// import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
 import { UserModel } from '../../models/user.js'
-// import verifyJwt from '../../middleware/Authentication.js'
+import { UsersService } from '../../services/UsersService.js'
 
 /**
  * Encapsulates a controller.
  */
-export class UserController {
+export class UsersController {
+  /**
+   * The service.
+   *
+   * @type {UsersService}
+   */
+  #service
+
+  /**
+   * Initializes a new instance.
+   *
+   * @param {UsersService} service - A service instantiated from a class with the same capabilities as UsersService.
+   */
+  constructor (service = new UsersService()) {
+    this.#service = service
+  }
+
   /**
    * Authenticates a user.
    *
@@ -24,31 +40,30 @@ export class UserController {
    */
   async login (req, res, next) {
     try {
-      const user = await UserModel.authenticate(req.body.username, req.body.password)
+      // console.log('LOGIN')
+      // const user = await UserModel.authenticate(req.body.username, req.body.password)
+      // const token = Buffer.from(process.env.ACCESS_TOKEN_SECRET, 'base64')
 
-      const token = Buffer.from(process.env.ACCESS_TOKEN_SECRET, 'base64')
+      // const payload = {
+      //   sub: user.username,
+      //   password: user.password,
+      //   given_name: user.firstName,
+      //   family_name: user.lastName,
+      //   id: user._id
+      // }
 
-      const payload = {
-        sub: user.username,
-        password: user.password,
-        given_name: user.firstName,
-        family_name: user.lastName,
-        id: user._id
-      }
+      // // Create the access token with the shorter lifespan.
+      // const accessToken = jwt.sign(payload, token, {
+      //   algorithm: 'RS256',
+      //   expiresIn: process.env.ACCESS_TOKEN_LIFE
+      // })
 
-      console.log('PAY', payload)
-
-      // Create the access token with the shorter lifespan.
-      const accessToken = jwt.sign(payload, token, {
-        algorithm: 'RS256',
-        expiresIn: process.env.ACCESS_TOKEN_LIFE
-      })
+      const accessToken = await this.#service.signToken(req)
 
       res
         .status(200)
         .json({
           access_token: accessToken
-          // refresh_token: refreshToken
         })
     } catch (error) {
       // Authentication failed.

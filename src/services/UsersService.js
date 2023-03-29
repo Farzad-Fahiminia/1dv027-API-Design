@@ -1,23 +1,41 @@
 /**
  * Module for the UsersService.
  *
- * @author Mats Loock
- * @version 2.0.0
+ * @author Farzad Fahiminia <ff222cb@student.lnu.se>
+ * @version 1.0.0
  */
 
-import { MongooseServiceBase } from './MongooseServiceBase.js'
-import { UserRepository } from '../repositories/UserRepository.js'
+import jwt from 'jsonwebtoken'
+import { UserModel } from '../models/user.js'
 
 /**
- * Encapsulates a user service.
+ * Encapsulates a service.
  */
-export class UsersService extends MongooseServiceBase {
+export class UsersService {
   /**
-   * Initializes a new instance.
+   * Handles the access token.
    *
-   * @param {UserRepository} [repository=new UserRepository()] - A repository instantiated from a class with the same capabilities as UserRepository.
+   * @param {object} req - Express request object.
+   * @returns {object} - Returns the response object.
    */
-  constructor (repository = new UserRepository()) {
-    super(repository)
+  async signToken (req) {
+    const user = await UserModel.authenticate(req.body.username, req.body.password)
+    const token = Buffer.from(process.env.ACCESS_TOKEN_SECRET, 'base64')
+
+    const payload = {
+      sub: user.username,
+      password: user.password,
+      given_name: user.firstName,
+      family_name: user.lastName,
+      id: user._id
+    }
+
+    // Create the access token with the shorter lifespan.
+    const accessToken = jwt.sign(payload, token, {
+      algorithm: 'RS256',
+      expiresIn: process.env.ACCESS_TOKEN_LIFE
+    })
+
+    return accessToken
   }
 }
