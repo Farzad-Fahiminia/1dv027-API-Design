@@ -35,7 +35,6 @@ export class Links {
    * @returns {object} - Returns the response object.
    */
   getLink (record, req) {
-    console.log(record)
     const link = [
       { rel: 'self', method: 'GET', href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${record._id}` }
     ]

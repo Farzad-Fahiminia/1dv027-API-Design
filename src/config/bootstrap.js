@@ -6,7 +6,6 @@
  */
 
 import { IoCContainer } from '../util/IoCContainer.js'
-// import { UsersService } from '../services/UsersService.js'
 import { RecordRepository } from '../repositories/RecordRepository.js'
 import { UserRepository } from '../repositories/UserRepository.js'
 import { RecordController } from '../controllers/api/RecordController.js'

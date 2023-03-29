@@ -7,28 +7,11 @@
 
 import jwt from 'jsonwebtoken'
 import { UserModel } from '../models/user.js'
-import { UsersService } from '../services/UsersService.js'
 
 /**
  * Encapsulates a user repository.
  */
 export class UserRepository {
-/**
- * The service.
- *
- * @type {UsersService}
- */
-  #service
-
-  /**
-   * Initializes a new instance.
-   *
-   * @param {UsersService} service - A service instantiated from a class with the same capabilities as UsersService.
-   */
-  constructor (service = new UsersService()) {
-    this.#service = service
-  }
-
   /**
    * Handles the access token.
    *

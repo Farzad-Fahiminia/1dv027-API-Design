@@ -5,8 +5,6 @@
  * @version 1.0.0
  */
 
-// import jwt from 'jsonwebtoken'
-// import { RecordModel } from '../models/record.js'
 import { Links } from '../util/Links.js'
 
 /**
