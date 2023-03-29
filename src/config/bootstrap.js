@@ -6,18 +6,19 @@
  */
 
 import { IoCContainer } from '../util/IoCContainer.js'
-import { UsersService } from '../services/UsersService.js'
+// import { UsersService } from '../services/UsersService.js'
+import { UserRepository } from '../repositories/UserRepository.js'
 import { UsersController } from '../controllers/api/UsersController.js'
 
 const iocContainer = new IoCContainer()
 
-iocContainer.register('UsersService', UsersService, {
+iocContainer.register('UserRepository', UserRepository, {
   singleton: true
 })
 
 iocContainer.register('UsersController', UsersController, {
   dependencies: [
-    'UsersService'
+    'UserRepository'
   ],
   singleton: true
 })

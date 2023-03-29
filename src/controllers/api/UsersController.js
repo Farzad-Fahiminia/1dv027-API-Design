@@ -8,8 +8,9 @@
 // import createError from 'http-errors'
 // import jwt from 'jsonwebtoken'
 import createError from 'http-errors'
-import { UserModel } from '../../models/user.js'
-import { UsersService } from '../../services/UsersService.js'
+// import { UserModel } from '../../models/user.js'
+// import { UsersService } from '../../services/UsersService.js'
+import { UserRepository } from '../../repositories/UserRepository.js'
 
 /**
  * Encapsulates a controller.
@@ -18,17 +19,17 @@ export class UsersController {
   /**
    * The service.
    *
-   * @type {UsersService}
+   * @type {UserRepository}
    */
-  #service
+  #repository
 
   /**
    * Initializes a new instance.
    *
-   * @param {UsersService} service - A service instantiated from a class with the same capabilities as UsersService.
+   * @param {UserRepository} repository - A service instantiated from a class with the same capabilities as UsersService.
    */
-  constructor (service = new UsersService()) {
-    this.#service = service
+  constructor (repository = new UserRepository()) {
+    this.#repository = repository
   }
 
   /**
@@ -58,7 +59,7 @@ export class UsersController {
       //   expiresIn: process.env.ACCESS_TOKEN_LIFE
       // })
 
-      const accessToken = await this.#service.signToken(req)
+      const accessToken = await this.repository.signToken(req)
 
       res
         .status(200)
@@ -83,15 +84,19 @@ export class UsersController {
    */
   async register (req, res, next) {
     try {
-      const user = new UserModel({
-        username: req.body.username,
-        password: req.body.password,
-        firstName: req.body.firstName,
-        lastName: req.body.lastName,
-        email: req.body.email
-      })
+      // const user = new UserModel({
+      //   username: req.body.username,
+      //   password: req.body.password,
+      //   firstName: req.body.firstName,
+      //   lastName: req.body.lastName,
+      //   email: req.body.email
+      // })
 
-      await user.save()
+      // console.log(req.body)
+
+      // await user.save()
+
+      const user = await this.#repository.registerUser(req)
 
       res
         .status(201)
