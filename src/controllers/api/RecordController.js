@@ -11,6 +11,7 @@ import createError from 'http-errors'
 // import { UserModel } from '../../models/user.js'
 import { RecordModel } from '../../models/record.js'
 import { RecordRepository } from '../../repositories/RecordRepository.js'
+import { RecordService } from '../../services/RecordService.js'
 
 /**
  * Encapsulates a controller.
@@ -22,14 +23,22 @@ export class RecordController {
    * @type {RecordRepository}
    */
   #repository
+  /**
+   * The service.
+   *
+   * @type {RecordService}
+   */
+  #service
 
   /**
    * Initializes a new instance.
    *
-   * @param {RecordRepository} repository - A service instantiated from a class with the same capabilities as RecordRepository.
+   * @param {RecordRepository} repository - A repository instantiated from a class with the same capabilities as RecordRepository.
+   * @param {RecordService} service - A service instantiated from a class with the same capabilities as RecordRepository.
    */
-  constructor (repository = new RecordRepository()) {
+  constructor (repository = new RecordRepository(), service = new RecordService()) {
     this.#repository = repository
+    this.#service = service
   }
 
   /**
@@ -80,8 +89,13 @@ export class RecordController {
     try {
       // const records = await RecordModel.find()
       const records = await this.#repository.getAllRecords()
+      const apiResponse = await this.#service.getAllRecordsApi(records, req)
+
       if (records !== null) {
-        res.status(200).send(records)
+        res
+          .status(200)
+          .json(apiResponse)
+        // res.status(200).send(records)
       } else {
         res.status(404)
       }

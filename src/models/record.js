@@ -23,19 +23,10 @@ const schema = new mongoose.Schema({
     required: [true, 'Release year is required.'],
     trim: true
   },
-  uri: {
-    type: String,
-    required: true,
-    trim: true,
-    minlength: 1
-  },
   userId: {
     type: String,
     required: true,
     immutable: true
-  },
-  comments: {
-    type: [{ body: String, date: Date }]
   }
 }, {
   timestamps: true,

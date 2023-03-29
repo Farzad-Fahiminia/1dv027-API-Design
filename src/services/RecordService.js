@@ -12,30 +12,43 @@
  * Encapsulates a service.
  */
 export class RecordService {
-  // /**
-  //  * Handles the access token.
-  //  *
-  //  * @param {object} req - Express request object.
-  //  * @returns {object} - Returns the response object.
-  //  */
-  // async signToken (req) {
-  //   const user = await RecordModel.authenticate(req.body.username, req.body.password)
-  //   const token = Buffer.from(process.env.ACCESS_TOKEN_SECRET, 'base64')
+  /**
+   * Handles the access token.
+   *
+   * @param {object} records - All of the records.
+   * @param {object} req - Express request object.
+   * @returns {object} - Returns the response object.
+   */
+  async getAllRecordsApi (records, req) {
+    // console.log(records)
 
-  //   const payload = {
-  //     sub: user.username,
-  //     password: user.password,
-  //     given_name: user.firstName,
-  //     family_name: user.lastName,
-  //     id: user._id
-  //   }
+    // const links = {
+    //   rel: 'records',
+    //   href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${_id}`,
+    //   method: 'GET'
+    // }
 
-  //   // Create the access token with the shorter lifespan.
-  //   const accessToken = jwt.sign(payload, token, {
-  //     algorithm: 'RS256',
-  //     expiresIn: process.env.ACCESS_TOKEN_LIFE
-  //   })
+    const recordsCollection = []
 
-  //   return accessToken
-  // }
+    records.forEach((record) => {
+      const recordObject = {
+        artist: record.artist,
+        recordTitle: record.recordTitle,
+        releaseYear: record.releaseYear,
+        recordId: record._id,
+        links: [{
+          rel: 'self',
+          method: 'GET',
+          href: `${req.protocol}://${req.get('host')}${req.baseUrl}/${record._id}`
+        }]
+      }
+      recordsCollection.push(recordObject)
+    })
+
+    const response = {
+      records: recordsCollection
+    }
+
+    return response
+  }
 }
