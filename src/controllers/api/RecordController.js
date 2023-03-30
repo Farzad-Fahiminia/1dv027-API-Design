@@ -153,7 +153,7 @@ export class RecordController {
       const record = await this.#repository.addRecord(req)
 
       const apiResponse = await this.#service.getRecordApi(record, req)
-      await this.#webhookService.emitNewRecord(record)
+      this.#webhookService.emitNewRecord(record)
 
       res
         .status(201)
