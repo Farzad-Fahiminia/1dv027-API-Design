@@ -152,12 +152,12 @@ export class RecordController {
     try {
       const record = await this.#repository.addRecord(req)
 
-      // const apiResponse = await this.#service.getRecordApi(record, req)
+      const apiResponse = this.#service.getRecordApi(req, record)
       this.#webhookService.emitNewRecord(record)
 
       res
         .status(201)
-        .json(record)
+        .json(apiResponse)
     } catch (error) {
       console.log(error)
     }

@@ -62,12 +62,12 @@ export class RecordService {
   /**
    * Handles the records api links.
    *
-   * @param {object} record - A record.
    * @param {object} req - Express request object.
+   * @param {object} record - A record.
    * @returns {object} - Returns the response object.
    */
-  async getRecordApi (record, req) {
-    const baseLinks = await this.#links.getBaseLink(req)
+  getRecordApi (req, record) {
+    const baseLinks = this.#links.getBaseLink(req)
 
     const link = this.#links.getAllLinks(record, req)
     const recordObject = {
