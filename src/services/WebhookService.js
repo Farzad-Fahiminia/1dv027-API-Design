@@ -6,7 +6,7 @@
  */
 
 // import { WebhookModel } from '../models/webhook.js'
-import { WebhookRepository } from '../repositories/webhookRepository.js'
+import { WebhookRepository } from '../repositories/WebhookRepository.js'
 
 /**
  * Encapsulates a service.
