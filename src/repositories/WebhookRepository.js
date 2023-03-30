@@ -26,4 +26,15 @@ export class WebhookRepository {
 
     return webhook
   }
+
+  /**
+   * Registers the webhook.
+   *
+   * @returns {object} - Returns the response object.
+   */
+  async getAllWebhookUsers () {
+    const webhookUsers = await WebhookModel.find()
+
+    return webhookUsers
+  }
 }

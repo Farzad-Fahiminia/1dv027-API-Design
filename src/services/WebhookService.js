@@ -5,19 +5,36 @@
  * @version 1.0.0
  */
 
-import { WebhookModel } from '../models/webhook.js'
+// import { WebhookModel } from '../models/webhook.js'
+import { WebhookRepository } from '../repositories/webhookRepository.js'
 
 /**
  * Encapsulates a service.
  */
 export class WebhookService {
   /**
+   * The repository.
+   *
+   * @type {WebhookRepository}
+   */
+  #repository
+
+  /**
+   * Initializes a new instance.
+   *
+   * @param {WebhookRepository} repository - A repository instantiated from a class with the same capabilities as WebhookRepository.
+   */
+  constructor (repository = new WebhookRepository()) {
+    this.#repository = repository
+  }
+
+  /**
    * Notify webhook users.
    *
    * @param {object} record - Record.
    */
   async emitNewRecord (record) {
-    const webhookUsers = await WebhookModel.find()
+    const webhookUsers = await this.#repository.getAllWebhookUsers()
 
     webhookUsers.forEach((webhookUser) => {
       fetch(`${webhookUser.url}`, {
