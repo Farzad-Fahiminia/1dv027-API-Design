@@ -6,12 +6,25 @@
  */
 
 import { IoCContainer } from '../util/IoCContainer.js'
+import { WebhookRepository } from '../repositories/WebhookRepository.js'
 import { RecordRepository } from '../repositories/RecordRepository.js'
 import { UserRepository } from '../repositories/UserRepository.js'
+import { WebhookController } from '../controllers/api/WebhookController.js'
 import { RecordController } from '../controllers/api/RecordController.js'
 import { UsersController } from '../controllers/api/UsersController.js'
 
 const iocContainer = new IoCContainer()
+
+iocContainer.register('WebhookRepository', WebhookRepository, {
+  singleton: true
+})
+
+iocContainer.register('WebhookController', WebhookController, {
+  dependencies: [
+    'WebhookRepository'
+  ],
+  singleton: true
+})
 
 iocContainer.register('RecordRepository', RecordRepository, {
   singleton: true

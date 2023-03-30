@@ -1,5 +1,5 @@
 /**
- * Mongoose model Record.
+ * Mongoose model Webhook.
  *
  * @author Farzad Fahiminia <ff222cb@student.lnu.se>
  * @version 1.0.0
@@ -9,24 +9,10 @@ import mongoose from 'mongoose'
 
 // Create a schema.
 const schema = new mongoose.Schema({
-  artist: {
+  url: {
     type: String,
-    required: [true, 'Artist is required.'],
+    required: [true, 'Url is required.'],
     trim: true
-  },
-  recordTitle: {
-    type: String,
-    required: [true, 'Title is required.']
-  },
-  releaseYear: {
-    type: Number,
-    required: [true, 'Release year is required.'],
-    trim: true
-  },
-  userId: {
-    type: String,
-    required: true,
-    immutable: true
   }
 }, {
   timestamps: true,
@@ -50,4 +36,4 @@ schema.virtual('id').get(function () {
 })
 
 // Create a model using the schema.
-export const RecordModel = mongoose.model('Record', schema)
+export const WebhookModel = mongoose.model('Webhook', schema)

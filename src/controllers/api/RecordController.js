@@ -10,6 +10,7 @@ import createError from 'http-errors'
 import { RecordModel } from '../../models/record.js'
 import { RecordRepository } from '../../repositories/RecordRepository.js'
 import { RecordService } from '../../services/RecordService.js'
+import { WebhookService } from '../../services/WebhookService.js'
 
 /**
  * Encapsulates a controller.
@@ -27,16 +28,24 @@ export class RecordController {
    * @type {RecordService}
    */
   #service
+  /**
+   * The webhook service.
+   *
+   * @type {WebhookService}
+   */
+  #webhookService
 
   /**
    * Initializes a new instance.
    *
    * @param {RecordRepository} repository - A repository instantiated from a class with the same capabilities as RecordRepository.
-   * @param {RecordService} service - A service instantiated from a class with the same capabilities as RecordRepository.
+   * @param {RecordService} service - A service instantiated from a class with the same capabilities as RecordService.
+   * @param {WebhookService} webhookService - A service instantiated from a class with the same capabilities as WebhookService.
    */
-  constructor (repository = new RecordRepository(), service = new RecordService()) {
+  constructor (repository = new RecordRepository(), service = new RecordService(), webhookService = new WebhookService()) {
     this.#repository = repository
     this.#service = service
+    this.#webhookService = webhookService
   }
 
   /**
@@ -144,6 +153,7 @@ export class RecordController {
       const record = await this.#repository.addRecord(req)
 
       const apiResponse = await this.#service.getRecordApi(record, req)
+      await this.#webhookService.emitNewRecord(record)
 
       res
         .status(201)
