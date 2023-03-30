@@ -29,9 +29,9 @@ router.get('/:id',
   (req, res, next) => resolveRecordController(req).getRecord(req, res, next)
 )
 
-router.post('/',
-  (req, res, next) => controller.authenticateJWT(req, res, next),
-  (req, res, next) => resolveRecordController(req).addRecord(req, res, next)
+router.post('/', (req, res) => res.json({ message: 'Hooray! Welcome to version 1 of this very simple RESTful API!' })
+  // (req, res, next) => controller.authenticateJWT(req, res, next),
+  // (req, res, next) => resolveRecordController(req).addRecord(req, res, next)
 )
 
 router.put('/:id',
