@@ -24,6 +24,11 @@ try {
   // Parse requests of the content type application/json.
   app.use(express.json())
 
+  // Trusts proxy and adds https in response.
+  if (app.get('env') !== 'development') {
+    app.set('trust proxy', 1)
+  }
+
   // Register routes.
   app.use('/', router)
 
