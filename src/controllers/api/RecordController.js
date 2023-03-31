@@ -150,16 +150,21 @@ export class RecordController {
    */
   async addRecord (req, res, next) {
     try {
-      const record = await this.#repository.addRecord(req)
+      if (req.body.artist === undefined || req.body.recordTitle === undefined || req.body.releaseYear === undefined) {
+        const err = createError(400, 'Bad request.')
 
-      const apiResponse = this.#service.getRecordApi(req, record)
-      this.#webhookService.emitNewRecord(record)
+        next(err)
+      } else {
+        const record = await this.#repository.addRecord(req)
+        const apiResponse = this.#service.getRecordApi(req, record)
+        this.#webhookService.emitNewRecord(record)
 
-      res
-        .status(201)
-        .json(apiResponse)
+        res
+          .status(201)
+          .json(apiResponse)
+      }
     } catch (error) {
-      console.log(error)
+      next(error)
     }
   }
 

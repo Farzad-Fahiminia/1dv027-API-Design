@@ -62,7 +62,6 @@ export class RecordRepository {
       artist: req.body.artist,
       recordTitle: req.body.recordTitle,
       releaseYear: req.body.releaseYear,
-      uri: req.body.uri,
       userId: req.user.id
     })
 
