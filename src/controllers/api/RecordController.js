@@ -252,8 +252,8 @@ export class RecordController {
   async deleteRecord (req, res, next) {
     try {
       const record = await RecordModel.findById(req.params.id)
-      if (req.user.id === record.userId) {
-        if (record !== null) {
+      if (!record) {
+        if (req.user.id === record.userId) {
           await this.#repository.deleteRecord(record)
 
           const apiResponse = await this.#service.getBaseApi(req)
@@ -262,10 +262,10 @@ export class RecordController {
             .status(200)
             .json(apiResponse)
         } else {
-          next(createError(404, 'The requested resource was not found.'))
+          next(createError(403, 'The request contained valid data and was understood by the server, but the server is refusing action due to the authenticated user not having the necessary permissions for the resource.'))
         }
       } else {
-        next(createError(403, 'The request contained valid data and was understood by the server, but the server is refusing action due to the authenticated user not having the necessary permissions for the resource.'))
+        next(createError(404, 'The requested resource was not found.'))
       }
     } catch (error) {
       const err = createError(500, 'An unexpected condition was encountered.')
