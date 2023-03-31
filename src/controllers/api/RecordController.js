@@ -123,9 +123,9 @@ export class RecordController {
   async getRecord (req, res, next) {
     try {
       const record = await this.#repository.getRecord(req)
-      const apiResponse = await this.#service.getRecordApi(req, record)
 
       if (record.id.length > 0 && record.id !== null) {
+        const apiResponse = await this.#service.getRecordApi(req, record)
         res
           .status(200)
           .json(apiResponse)
