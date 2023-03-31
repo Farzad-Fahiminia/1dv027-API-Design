@@ -5,6 +5,7 @@
  * @version 1.0.0
  */
 
+import createError from 'http-errors'
 import { WebhookRepository } from '../../repositories/WebhookRepository.js'
 
 /**
@@ -49,6 +50,10 @@ export class WebhookController {
    */
   async register (req, res, next) {
     try {
+      if (!req.body.url) {
+        next(createError(400, 'Bad request.'))
+        return
+      }
       const response = await this.#repository.registerWebhook(req)
 
       res.status(201).json(response.url)
