@@ -252,7 +252,7 @@ export class RecordController {
   async deleteRecord (req, res, next) {
     try {
       const record = await RecordModel.findById(req.params.id)
-      if (!record) {
+      if (record) {
         if (req.user.id === record.userId) {
           await this.#repository.deleteRecord(record)
 
