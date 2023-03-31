@@ -181,7 +181,7 @@ export class RecordController {
           if (record !== null) {
             const record = await this.#repository.putRecord(req)
 
-            const apiResponse = await this.#service.getRecordApi(record, req)
+            const apiResponse = await this.#service.getRecordApi(req, record)
 
             res
               .status(200)
@@ -215,7 +215,7 @@ export class RecordController {
       if (record !== null) {
         const record = await this.#repository.patchRecord(req)
 
-        const apiResponse = await this.#service.getRecordApi(record, req)
+        const apiResponse = await this.#service.getRecordApi(req, record)
 
         res
           .status(200)
