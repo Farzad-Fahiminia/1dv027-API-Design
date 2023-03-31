@@ -123,7 +123,6 @@ export class RecordController {
   async getRecord (req, res, next) {
     try {
       const record = await this.#repository.getRecord(req)
-      console.log(record)
       if (!record) {
         next(createError(404, 'The requested resource was not found.'))
         return
@@ -218,16 +217,20 @@ export class RecordController {
     try {
       const record = await RecordModel.findById(req.params.id)
 
-      if (record !== null) {
-        const record = await this.#repository.patchRecord(req)
+      if (req.user.id === record.userId) {
+        if (record !== null) {
+          const record = await this.#repository.patchRecord(req)
 
-        const apiResponse = await this.#service.getRecordApi(req, record)
+          const apiResponse = await this.#service.getRecordApi(req, record)
 
-        res
-          .status(200)
-          .json(apiResponse)
+          res
+            .status(200)
+            .json(apiResponse)
+        } else {
+          next(createError(404, 'The requested resource was not found.'))
+        }
       } else {
-        next(createError(404, 'The requested resource was not found.'))
+        next(createError(403, 'The request contained valid data and was understood by the server, but the server is refusing action due to the authenticated user not having the necessary permissions for the resource.'))
       }
     } catch (error) {
       let err = error
