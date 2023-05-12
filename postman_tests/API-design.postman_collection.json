@@ -1212,12 +1212,12 @@
 		},
 		{
 			"key": "baseUrl",
-			"value": "",
+			"value": "https://1dv027-api-design-production.up.railway.app/api/v1",
 			"type": "string"
 		},
 		{
 			"key": "record_url",
-			"value": "",
+			"value": "https://1dv027-api-design-production.up.railway.app/api/v1/record/64271d9609e56b6df6880875",
 			"type": "string"
 		}
 	]
