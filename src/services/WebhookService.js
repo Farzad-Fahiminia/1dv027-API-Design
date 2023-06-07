@@ -5,7 +5,7 @@
  * @version 1.0.0
  */
 
-// import { WebhookModel } from '../models/webhook.js'
+import fetch from 'node-fetch'
 import { WebhookRepository } from '../repositories/WebhookRepository.js'
 
 /**
